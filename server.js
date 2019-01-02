@@ -3,12 +3,23 @@ const path = require("path");
 const PORT = process.env.PORT || 3001;
 const app = express();
 
+// middleware for parsing body on post request
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
 // db stuff
 const mongoose = require("mongoose");
 mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/ingredientLove")
 const db = require("./models");
 
-// 
+// login post route
+
+app.post("/login", function(req,res){
+  console.log("login route hit!");
+  console.log(req.body);
+  res.json({loggedIn: true});
+})
+
 app.get("/allusers", function(req, res) {
   console.log("All users route was hit!");
   // get all users and send them back in a json blob

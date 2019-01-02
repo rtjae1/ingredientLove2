@@ -12,7 +12,17 @@ class App extends Component {
     event.preventDefault();
     console.log("login clicked");
     console.log(this);
-    this.setState({ loggedIn: true });
+    axios.post("/login", {
+      username: "admin",
+      password: "test"
+    })
+    .then(function(response) {
+      console.log(response);
+    })
+    .catch(function(error) {
+      console.log(error);
+    })
+    // this.setState({ loggedIn: true });
   }
 
   componentDidMount() {
