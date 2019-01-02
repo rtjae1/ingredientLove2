@@ -1,8 +1,16 @@
 import React, { Component } from "react";
+import axios from "axios";
 import logo from "./logo.svg";
 import "./App.css";
 
 class App extends Component {
+
+  componentDidMount() {
+    console.log("componentDidMount lifecycle method ran")
+    axios.get("allusers")
+    .then(response => { console.log(response)});
+  }
+
   render() {
     return (
       <div className="App">
