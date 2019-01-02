@@ -1,7 +1,11 @@
 const express = require("express");
+var session = require("express-session");
 const path = require("path");
 const PORT = process.env.PORT || 3001;
 const app = express();
+
+// requiring passport as we've configured it
+var passport = require("./config/passport")
 
 // middleware for parsing body on post request
 app.use(express.urlencoded({ extended: true }));
@@ -12,13 +16,41 @@ const mongoose = require("mongoose");
 mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/ingredientLove")
 const db = require("./models");
 
+// set up passport here
+app.use(session({ secret: "keyboard cat", resave: true, saveUninitialized: true }));
+app.use(passport.initialize());
+app.use(passport.session());
+
 // login post route
 
-app.post("/login", function(req,res){
-  console.log("login route hit!");
-  console.log(req.body);
-  res.json({loggedIn: true});
-})
+// TODO: 
+app.post("/login", passport.authenticate("local"), function(req, res) {
+  // Since we are doing a post in javascript, we can't actually redirect that post to a
+  // So we are sending the user back the route to the members' page because the redirect will
+  // They won't get this or even be able to access this page if they aren't authed
+  // res.json("/members");
+  res.json({loggedIn: true,
+  message: "WOOOOO IT WORKED!",
+  username: req.user.username})
+});
+
+// route to get user info
+
+// route for getting some data about our users to be used client side
+app.get("/user_data", function(req, res) {
+  if (!req.user) {
+    // The user is not logged in, send back an empty object
+    res.json({ loggedIn: false });
+  }
+  else {
+    // Otherwise send back the user's username and id
+    // Sending back a password, even a hashed password, is not a good idea
+    res.json({
+      username: req.user.username,
+      loggedIn: true
+    });
+  }
+});
 
 app.get("/allusers", function(req, res) {
   console.log("All users route was hit!");
