@@ -1,5 +1,5 @@
 // import React, { Component } from "react";
-// import axios from "axios";
+
 // import "./App.css";
 
 // class App extends Component {
@@ -63,6 +63,7 @@
 // export default App;
 
 import React, { Component } from "react";
+import axios from "axios";
 import "./App.css";
 
 const emailRegex = RegExp(
@@ -114,6 +115,24 @@ class App extends Component {
         Email: ${this.state.email}
         Password: ${this.state.password}
       `);
+
+      // use axios to post this data to the server
+
+      console.log("login clicked");
+      console.log(this);
+      axios
+        .post("/createnewaccount", {
+          username: "admin",
+          password: "test"
+        })
+        .then(response => {
+          console.log(response);
+          // this.setState({ loggedIn: true, username: response.data.username });
+          this.setState({ loggedIn: true });
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
     } else {
       console.error("FORM INVALID - DISPLAY ERROR MESSAGE");
     }
@@ -149,7 +168,20 @@ class App extends Component {
     this.setState({ formErrors, [name]: value }, () => console.log(this.state));
   };
 
+  handleLogout = e => {
+    e.preventDefault();
+    this.setState({ loggedIn: false });
+  };
+
   render() {
+    if (this.state.loggedIn === true) {
+      return (
+        <div>
+          <h1> I logged in! </h1>
+          <button onClick={this.handleLogout}>Log out</button>
+        </div>
+      );
+    }
     const { formErrors } = this.state;
 
     return (

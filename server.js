@@ -5,7 +5,7 @@ const PORT = process.env.PORT || 3001;
 const app = express();
 
 // requiring passport as we've configured it
-var passport = require("./config/passport")
+var passport = require("./config/passport");
 
 // middleware for parsing body on post request
 app.use(express.urlencoded({ extended: true }));
@@ -13,25 +13,26 @@ app.use(express.json());
 
 // db stuff
 const mongoose = require("mongoose");
-mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/ingredientLove")
+mongoose.connect(
+  process.env.MONGODB_URI || "mongodb://localhost/ingredientLove"
+);
 const db = require("./models");
 
 // set up passport here
-app.use(session({ secret: "keyboard cat", resave: true, saveUninitialized: true }));
+app.use(
+  session({ secret: "keyboard cat", resave: true, saveUninitialized: true })
+);
 app.use(passport.initialize());
 app.use(passport.session());
 
 // login post route
 
-// TODO: 
 app.post("/login", passport.authenticate("local"), function(req, res) {
-  // Since we are doing a post in javascript, we can't actually redirect that post to a
-  // So we are sending the user back the route to the members' page because the redirect will
-  // They won't get this or even be able to access this page if they aren't authed
-  // res.json("/members");
-  res.json({loggedIn: true,
-  message: "WOOOOO IT WORKED!",
-  username: req.user.username})
+  res.json({
+    loggedIn: true,
+    message: "WOOOOO IT WORKED!",
+    username: req.user.username
+  });
 });
 
 // route to get user info
@@ -41,8 +42,7 @@ app.get("/user_data", function(req, res) {
   if (!req.user) {
     // The user is not logged in, send back an empty object
     res.json({ loggedIn: false });
-  }
-  else {
+  } else {
     // Otherwise send back the user's username and id
     // Sending back a password, even a hashed password, is not a good idea
     res.json({
@@ -55,11 +55,20 @@ app.get("/user_data", function(req, res) {
 app.get("/allusers", function(req, res) {
   console.log("All users route was hit!");
   // get all users and send them back in a json blob
-  db.User
-    .find({})
+  db.User.find({})
     .then(dbModel => res.json(dbModel))
     .catch(err => res.status(422).json(err));
-})
+});
+
+app.post("/createnewaccount", function(req, res) {
+  console.log("New account created");
+  console.log(req.body);
+  // Create the new user in MongoDb (only if it doesn't already exist?)
+  // Send success confirmation if new user created
+  // send... something else? error? if user already existed
+
+  res.json({ success: true });
+});
 
 // Serve up static assets (usually on heroku)
 if (process.env.NODE_ENV === "production") {
