@@ -1,68 +1,13 @@
-// import React, { Component } from "react";
-
-// import "./App.css";
-
-// class App extends Component {
-//   state = {
-//     loggedIn: false
-//   };
-
-//   handleLogin = event => {
-//     event.preventDefault();
-//     console.log("login clicked");
-//     console.log(this);
-//     axios
-//       .post("/login", {
-//         username: "admin",
-//         password: "test"
-//       })
-//       .then(response => {
-//         console.log(response);
-//         this.setState({ loggedIn: true, username: response.data.username });
-//       })
-//       .catch(function(error) {
-//         console.log(error);
-//       });
-//   };
-
-//   componentDidMount() {
-//     console.log("componentDidMount lifecycle method ran");
-
-//     axios.get("/user_data").then(response => {
-//       console.log(response);
-//       if (response.data.loggedIn) {
-//         this.setState({ loggedIn: true, username: response.data.username });
-//       } else {
-//         console.log("No logged in user stored in session");
-//       }
-//     });
-//   }
-
-//   render() {
-//     let banner = this.state.loggedIn
-//       ? `Woah! ${this.state.username} logged in!`
-//       : `Please log in`;
-//     return (
-//       <div className="App">
-//         <h1>{banner}</h1>
-//         <div className="App-header">
-//           <h2>Hello user</h2>
-//         </div>
-//         <p className="App-intro">
-//           {!this.state.loggedIn ? (
-//             <button onClick={this.handleLogin}>Log in to Application</button>
-//           ) : (
-//             ""
-//           )}
-//         </p>
-//       </div>
-//     );
-//   }
-// }
-
-// export default App;
-
 import React, { Component } from "react";
+import {
+  Collapse,
+  Navbar,
+  NavbarToggler,
+  NavbarBrand,
+  Nav,
+  NavItem,
+  NavLink
+} from "reactstrap";
 import axios from "axios";
 import "./App.css";
 
@@ -115,19 +60,18 @@ class App extends Component {
         Email: ${this.state.email}
         Password: ${this.state.password}
       `);
-
-      // use axios to post this data to the server
-
       console.log("login clicked");
       console.log(this);
       axios
         .post("/createnewaccount", {
-          username: "admin",
-          password: "test"
+          firstName: this.state.firstName,
+          lastName: this.state.lastName,
+          email: this.state.email,
+          password: this.state.password
         })
         .then(response => {
           console.log(response);
-          // this.setState({ loggedIn: true, username: response.data.username });
+          this.setState({ loggedIn: true, email: response.data.email });
           this.setState({ loggedIn: true });
         })
         .catch(function(error) {
@@ -174,6 +118,27 @@ class App extends Component {
   };
 
   render() {
+    return (
+      <Navbar color="faded" light>
+        <NavbarBrand href="/" className="mr-auto">
+          reactstrap
+        </NavbarBrand>
+        <NavbarToggler onClick={this.toggleNavbar} className="mr-2" />
+        <Collapse isOpen={!this.state.collapsed} navbar>
+          <Nav navbar>
+            <NavItem>
+              <NavLink href="/components/">Components</NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink href="https://github.com/reactstrap/reactstrap">
+                GitHub
+              </NavLink>
+            </NavItem>
+          </Nav>
+        </Collapse>
+      </Navbar>
+    );
+
     if (this.state.loggedIn === true) {
       return (
         <div>
@@ -247,7 +212,9 @@ class App extends Component {
             </div>
             <div className="createAccount">
               <button type="submit">Create Account</button>
-              <small>Already Have an Account?</small>
+            </div>
+            <div className="login">
+              <button type="submit">Already Have an Account?</button>
             </div>
           </form>
         </div>

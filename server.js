@@ -66,8 +66,7 @@ app.post("/createnewaccount", function(req, res) {
   // Create the new user in MongoDb (only if it doesn't already exist?)
   // Send success confirmation if new user created
   // send... something else? error? if user already existed
-
-  res.json({ success: true });
+  db.User.create(req.body).then(dbModel => res.json(dbModel));
 });
 
 // Serve up static assets (usually on heroku)
