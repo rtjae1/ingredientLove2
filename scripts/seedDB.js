@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 const db = require("../models");
+const recipes = require("./recipe");
+const pantry = require("./pantry");
 
 mongoose.connect(
   process.env.MONGODB_URI || "mongodb://localhost/ingredientLove"
@@ -7,34 +9,42 @@ mongoose.connect(
 
 const userSeed = [
   {
-    username: "admin",
-    password: "test",
-    pantry: [{ id: 0, quantity: 6 }],
+    firstName: "Ryan",
+    lastName: "Jae",
+    email: "ryan.t.jae@gmail.com",
+    password: "test1234",
+    pantry: pantry,
     shoppingList: [{ id: 0, quantity: 4 }]
   },
   {
-    username: "admin",
-    password: "test",
-    pantry: [{ id: 1, quantity: 6 }],
+    firstName: "Sally",
+    lastName: "Test",
+    email: "sally@gmail.com",
+    password: "test1234",
+    pantry: pantry,
     shoppingList: [{ id: 1, quantity: 6 }]
   }
 ];
 
-const elementSeed = [
-  {
-    title: "tomoatos",
-    unit: "lbs"
-  },
-  {
-    title: "garlic",
-    unit: "cloves"
-  }
-];
+const recipeSeed = recipes;
 
-db.Element.remove({})
-  .then(() => db.Element.collection.insertMany(elementSeed))
+const pantrySeed = pantry;
+
+db.Recipe.remove({})
+  .then(() => db.Recipe.collection.insertMany(recipeSeed))
   .then(data => {
-    console.log(data.result.n + " records inserted!");
+    console.log(data.result.n + " recipe records inserted!");
+    process.exit(0);
+  })
+  .catch(err => {
+    console.error(err);
+    process.exit(1);
+  });
+
+db.Pantry.remove({})
+  .then(() => db.Pantry.collection.insertMany(pantrySeed))
+  .then(data => {
+    console.log(data.result.n + " pantry records inserted!");
     process.exit(0);
   })
   .catch(err => {
@@ -45,7 +55,7 @@ db.Element.remove({})
 db.User.remove({})
   .then(() => db.User.collection.insertMany(userSeed))
   .then(data => {
-    console.log(data.result.n + " records inserted!");
+    console.log(data.result.n + " user records inserted!");
     process.exit(0);
   })
   .catch(err => {
